@@ -1,0 +1,9 @@
+typedef struct endereco{
+	int end_inicial;
+	int end_final;
+	int indice;
+} Endereco;
+
+Endereco paginas[512];
+Endereco molduras[256];
+

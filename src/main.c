@@ -18,9 +18,11 @@
 
 Endereco pagina[PAGES];
 Endereco moldura[FRAMES];
+Ratio ratio;
+
+int hits, total_hits, total_buscas;
 
 char d[DESLOC+1];
-
 const char* imprime_binario(int valor, int tam){
     int i, j = 0;
     char temp[tam];
@@ -36,6 +38,17 @@ const char* imprime_binario(int valor, int tam){
 
     d[i] = '\0';
     return d;
+}
+
+void init(){
+    inicia_vetores(pagina, PAGES);
+    inicia_vetores(moldura, FRAMES);
+    criar_tabela_paginas();
+    ratio.miss = 0.0;
+    ratio.hit = 0.0;
+    hits = 0;
+    total_hits = 0;
+    total_buscas = 0;
 }
 
 void inicia_vetores(Endereco vetor[], int size){
@@ -105,44 +118,62 @@ void exibir_tabela_paginas(){
 }
 
 /*como saída, fornecerá a localização na tabela de páginas na forma nr. da página/deslocamento em decimal e binário e o respectivo endereço físico (ER) na forma nr.da moldura/deslocamento em decimal e binário, quando houver. Caso contrário, informar que houve PF.*/
-void exibir_tupla(int indice, int offset, int end){
+int exibir_tupla(int indice, int offset, int end){
+    int hit = 0;
     printf("|\n|\n|  Endereço:  %13d  ", end);
     printf("\n|-------------------------------------|--|------------------------------------|\n");
-    printf("|         Indice    Deslocamento      |  |    Indice     Deslocamento         |\n");
+    printf("|         Indice    Deslocamento      |/\\|    Indice     Deslocamento         |\n");
     printf("|  EV : ");
-    printf("%6d   %10d           |/\\|", indice, offset);
+    printf("%6d   %10d           |  |", indice, offset);
     printf("   %9s   ", imprime_binario(indice, PAGE_SIZE)); 
     printf("%13s%8s|\n", imprime_binario(offset, DESLOC), "");
     
     printf("|  ER : ");
 
     if(pagina[indice].mapeamento > FRAMES || pagina[indice].mapeamento < 0){
-        printf("   PAGE FAULT [%2d]%12s|\\/|%36s|", pagina[indice].mapeamento, "", "");
+        printf("   PAGE FAULT [%2d]%12s|\\/|%36s|", pagina[indice].mapeamento, "", ""); hit = 0;
     } else {     
         printf("%6d   %10d           |\\/|", pagina[indice].mapeamento, offset);
         printf("   %9s   ", imprime_binario(pagina[indice].mapeamento, FRAME_SIZE)); 
-        printf("%13s%8s|", imprime_binario(offset, DESLOC), "");
+        printf("%13s%8s|", imprime_binario(offset, DESLOC), ""); hit = 1; total_hits = total_hits + 1;
     }
    printf("\n|-------------------------------------|--|------------------------------------|\n");
+   return hit;
 }
 
 void gera_enderecos(int qtd){
     int r, i, j;
+    total_buscas = total_buscas + qtd;
     for(i = 0; i < qtd; i++){
-
         r = rand()%ADD_SIZE*PAGES;
-        
         busca_endereco(r);
     }
 }
 
+Ratio calcula_ratio(int qtd, int hit){
+    Ratio r;
+    if(qtd>0){
+        r.hit = (double) hit/qtd*100;
+        r.miss = (double) 100 - r.hit;
+        printf("|\n|  Acertos: %d\n", hit);
+        printf("|  Faults:  %d\n|\n", qtd - hit);
+        printf("|  HIT  RATIO : %3.2f %%\n", r.hit);
+        printf("|  MISS RATIO : %3.2f %%\n|\n", r.miss);
+    } else {
+        printf("|\n|  Acertos: 0\n", hit);
+        printf("|  Faults:  0\n|\n", qtd - hit);
+        printf("|  HIT  RATIO : 0.0 %%\n", r.hit);
+        printf("|  MISS RATIO : 0.0 %%\n|\n", r.miss);
+    }
+    return r;
+}
+
 void busca_endereco(int end){
     int j;
-    
     //printf("\n|  Tipo Indice Deslocamento  |  | %8sIndice    Deslocamento", " " );
     for(j = 0; j < PAGES; j++){
             if(pagina[j].end_inicial <= end && pagina[j].end_final >= end){
-                exibir_tupla(j, end - pagina[j].end_inicial, end);
+               if(exibir_tupla(j, end - pagina[j].end_inicial, end)) hits++;
             }
         }
 }
@@ -154,6 +185,7 @@ int menu(){
 	printf("|  2 - Gerar endereços aleatórios e  buscar na tabela %24s|\n", "");
 	printf("|  3 - Buscar endereço  %54s|\n", "");
     printf("|  4 - Nova Tabela de páginas %48s|\n", "");
+    printf("|  5 - Informações         %48s|\n", "");
 	printf("|  0 - Sair %66s|\n", "");
     printf("|-----------------------------------------------------------------------------|\n");
 	printf("|\n > ");
@@ -168,7 +200,9 @@ int menu(){
             printf("|\n|  Quantidade de endereços:\n|\n > ");
             scanf("%d", &var2);
             printf("|\n");
-            gera_enderecos(var2);
+            hits = 0;
+            gera_enderecos(var2); 
+            calcula_ratio(var2, hits);
             break;
         case 3: 
             printf("|\n|  Endereço a ser buscado: \n|\n > ");
@@ -183,9 +217,11 @@ int menu(){
             break;
         case 4:
             printf("|\n|  Criando nova tabela de páginas...\n|\n");
-            inicia_vetores(pagina, PAGES);
-            inicia_vetores(moldura, FRAMES);
-            criar_tabela_paginas();
+            init();
+            break;
+        case 5:
+            printf("|\n|  Ratios Gerais\n|\n");
+            ratio = calcula_ratio(total_buscas, total_hits);
             break;
         case 0: return 0;
         default: printf("|\n|  Inválido\n|\n"); break;
@@ -196,19 +232,10 @@ int menu(){
 
 int main(){
     setlocale(LC_ALL, "Portuguese");
-
     srand(time(NULL));
+    
+    init();
 
-    inicia_vetores(pagina, PAGES);
-    inicia_vetores(moldura, FRAMES);
-    criar_tabela_paginas();
-    /*
-    exibir_tabela_paginas();
-    printf("\n");
-    busca_tabela(qtd_enderecos);
-
-    printf("%s\n", imprime_binario(1, FRAME_SIZE));
-    printf("%s\n", imprime_binario(1, PAGE_SIZE));*/
     while(menu());
     
     return 0;

@@ -1,7 +1,7 @@
 default: src/main.c src/safeitoa.c
 	gcc -o bin/paginacao src/main.c src/safeitoa.c -O3
 run:
-	bin/main
+	bin/paginacao
 clean:
 	rm -rf bin/paginacao
 test:

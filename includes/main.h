@@ -10,6 +10,11 @@ typedef struct endereco{
     int index;
 } Endereco ;
 
+typedef struct ratio {
+    double hit;
+    double miss;
+} Ratio;
+
 const char* imprime_binario(int valor, int tam);
 
 void inicia_vetores(Endereco vetor[], int size);
@@ -24,6 +29,10 @@ void gera_enderecos(int qtd);
 
 void busca_endereco(int end);
 
-void exibir_tupla(int, int, int);
+int exibir_tupla(int, int, int);
+
+Ratio calcula_ratio(int qtd, int hits);
+
+void init();
 
 #endif

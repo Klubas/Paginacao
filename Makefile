@@ -1,9 +1,9 @@
 default: src/main.c src/safeitoa.c
-	gcc -o bin/main.exe src/main.c src/safeitoa.c -O3
+	gcc -o bin/paginacao src/main.c src/safeitoa.c -O3
 run:
-	bin/main.exe
+	bin/main
 clean:
-	rm -rf bin/main.exe
+	rm -rf bin/paginacao
 make test:
-	gcc -o bin/main.exe src/main.c src/safeitoa.c -O3 
-	bin/main.exe
+	gcc -o bin/paginacao src/main.c src/safeitoa.c -O3 
+	bin/paginacao

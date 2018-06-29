@@ -74,10 +74,10 @@ int repete(int valor){
 void criar_tabela_paginas(){
     int i, r;
     for(i = 0; i < FRAMES; i++){
-        r = rand()%PAGES;
+        r = rand()%PAGES - 1;
 
         while(repete(r))
-            r = rand()%PAGES;
+            r = rand()%PAGES - 1;
         
         moldura[i].mapeamento = r;
         pagina[r].mapeamento = i;
@@ -105,10 +105,11 @@ void exibir_tabela_paginas(){
 void exibir_tupla(int indice, int offset, int end){
     printf("|\n|\n|  Endereço:  %13d  ", end);
     printf("\n|-------------------------------------|--|------------------------------------|\n");
+    printf("|         Indice    Deslocamento      |  |    Indice     Deslocamento         |\n");
     printf("|  EV : ");
     printf("%6d   %10d           |/\\|", indice, offset);
-    printf("   %9s ", imprime_binario(indice, PAGE_SIZE)); 
-    printf("%13s%10s|\n", imprime_binario(offset, DESLOC), "");
+    printf("   %9s   ", imprime_binario(indice, PAGE_SIZE)); 
+    printf("%13s%8s|\n", imprime_binario(offset, DESLOC), "");
     
     printf("|  ER : ");
 
@@ -116,8 +117,8 @@ void exibir_tupla(int indice, int offset, int end){
         printf("   PAGE FAULT [%2d]%12s|\\/|%36s|", pagina[indice].mapeamento, "", "");
     } else {     
         printf("%6d   %10d           |\\/|", pagina[indice].mapeamento, offset);
-        printf("   %9s ", imprime_binario(pagina[indice].mapeamento, FRAME_SIZE)); 
-        printf("%13s%10s|", imprime_binario(offset, DESLOC), "");
+        printf("   %9s   ", imprime_binario(pagina[indice].mapeamento, FRAME_SIZE)); 
+        printf("%13s%8s|", imprime_binario(offset, DESLOC), "");
     }
    printf("\n|-------------------------------------|--|------------------------------------|\n");
 }

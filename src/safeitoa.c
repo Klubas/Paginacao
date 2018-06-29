@@ -7,7 +7,7 @@
 static char _numberSystem[] = "0123456789ABCDEF";
 static char _twosComp[] = "FEDCBA9876543210";
 
- void safestrrev(char *buffer, const int bufferSize, const int strlen)
+void safestrrev(char *buffer, const int bufferSize, const int strlen)
 {
     int len = strlen;
     if (len > bufferSize)
@@ -22,7 +22,7 @@ static char _twosComp[] = "FEDCBA9876543210";
     }
 }
 
- int negateBuffer(char *buffer, const int bufferSize, const int strlen, const int radix)
+int negateBuffer(char *buffer, const int bufferSize, const int strlen, const int radix)
 {
     int len = strlen;
     if (len > bufferSize)

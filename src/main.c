@@ -86,19 +86,22 @@ void criar_tabela_paginas(){
 
 void exibir_tabela_paginas(){
     int i = 0;
-    printf("|\n|-----------------------------------------------------------------------------|\n");
+    printf("|\n|-------------------------------------|--|------------------------------------|\n");
     printf("|  PAGINAS%28s|/\\|%26sMOLDURAS  |\n", " ", " ");
     printf("|  [Indice(P)] {Intervalo} Indice(M)  |\\/| Indice(P) {Intervalo} [Indice(M)]  |\n");
-    printf("|-----------------------------------------------------------------------------|\n");
+    printf("|-------------------------------------|--|------------------------------------|\n");
     for(i = 0; i < PAGES; i++) {
-        printf("|  [%3d] { %7d - %7d } %4d   |/\\|  ", i, pagina[i].end_inicial, pagina[i].end_final, pagina[i].mapeamento);
+        printf("|  [%3d] { %7d - %7d } %4d   ", i, pagina[i].end_inicial, pagina[i].end_final, pagina[i].mapeamento);
         if(i<FRAMES){
-            printf("%4d { %7d - %7d } [%3d]  |", moldura[i].mapeamento, moldura[i].end_inicial, moldura[i].end_final, i);
+            printf("|/\\|  %4d { %7d - %7d } [%3d]  |\n", moldura[i].mapeamento, moldura[i].end_inicial, moldura[i].end_final, i);
         } else {
-            printf("%34s|", " ");
+            printf("|\\/|  %34s|\n", " ");
         }
-        printf("\n");
     }
+    printf("|-------------------------------------|--|------------------------------------|\n");
+    printf("|  [Indice(P)] {Intervalo} Indice(M)  |/\\| Indice(P) {Intervalo} [Indice(M)]  |\n");
+    printf("|  PAGINAS%28s|\\/|%26sMOLDURAS  |\n", " ", " ");
+    printf("|-------------------------------------|--|------------------------------------|\n");
 }
 
 /*como saída, fornecerá a localização na tabela de páginas na forma nr. da página/deslocamento em decimal e binário e o respectivo endereço físico (ER) na forma nr.da moldura/deslocamento em decimal e binário, quando houver. Caso contrário, informar que houve PF.*/
@@ -179,7 +182,7 @@ int menu(){
             busca_endereco(var2);
             break;
         case 4:
-            printf("|  Criando nova tabela de páginas...\n|\n");
+            printf("|\n|  Criando nova tabela de páginas...\n|\n");
             inicia_vetores(pagina, PAGES);
             inicia_vetores(moldura, FRAMES);
             criar_tabela_paginas();

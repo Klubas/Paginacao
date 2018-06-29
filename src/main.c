@@ -160,10 +160,10 @@ Ratio calcula_ratio(int qtd, int hit){
         printf("|  HIT  RATIO : %3.2f %%\n", r.hit);
         printf("|  MISS RATIO : %3.2f %%\n|\n", r.miss);
     } else {
-        printf("|\n|  Acertos: 0\n", hit);
-        printf("|  Faults:  0\n|\n", qtd - hit);
-        printf("|  HIT  RATIO : 0.0 %%\n", r.hit);
-        printf("|  MISS RATIO : 0.0 %%\n|\n", r.miss);
+        printf("|\n|  Acertos: 0\n");
+        printf("|  Faults:  0\n|\n");
+        printf("|  HIT  RATIO : 0.0 %%\n");
+        printf("|  MISS RATIO : 0.0 %%\n|\n");
     }
     return r;
 }
@@ -179,18 +179,20 @@ void busca_endereco(int end){
 }
 
 int menu(){
-    int var1, var2;
+    int var1;
     printf("|-----------------------------------------------------------------------------|\n");
 	printf("|  1 - Exibir tabela de páginas %46s|\n", "");
 	printf("|  2 - Gerar endereços aleatórios e  buscar na tabela %24s|\n", "");
-	printf("|  3 - Buscar endereço  %54s|\n", "");
+	printf("|  3 - Buscar um endereço%53s|\n", "");
     printf("|  4 - Nova Tabela de páginas %48s|\n", "");
-    printf("|  5 - Informações         %48s|\n", "");
+    printf("|  5 - Informações            %48s|\n", "");
 	printf("|  0 - Sair %66s|\n", "");
     printf("|-----------------------------------------------------------------------------|\n");
 	printf("|\n > ");
-    scanf("%d", &var1);
-
+    if(scanf("%d", &var1)<0){
+        printf("|\n|  Inválido\n|\n");
+        return 1;
+    }
     
     switch (var1){
         case 1: 
@@ -198,22 +200,32 @@ int menu(){
             break;
         case 2: 
             printf("|\n|  Quantidade de endereços:\n|\n > ");
-            scanf("%d", &var2);
+
+            if(scanf("%d", &var1)<0){
+                printf("|\n|  Inválido\n|\n");
+                return 1;
+            }
+
             printf("|\n");
             hits = 0;
-            gera_enderecos(var2); 
-            calcula_ratio(var2, hits);
+            gera_enderecos(var1); 
+            calcula_ratio(var1, hits);
             break;
         case 3: 
             printf("|\n|  Endereço a ser buscado: \n|\n > ");
-            scanf("%d", &var2);
+
+            if(scanf("%d", &var1)<0){
+                printf("|\n|  Inválido\n|\n");
+                return 1;
+            }
+
             printf("|\n");
-            if(var2 >= ADD_SIZE*PAGES){
+            if(var1 >= ADD_SIZE*PAGES){
                 printf("|  Endereço indisponível\n|\n"); break;
-            } else if(var2 < 0){
+            } else if(var1 < 0){
                 printf("|  Endereço inválido\n|\n"); break;
             }
-            busca_endereco(var2);
+            busca_endereco(var1);
             break;
         case 4:
             printf("|\n|  Criando nova tabela de páginas...\n|\n");
